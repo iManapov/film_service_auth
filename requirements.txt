@@ -4,6 +4,7 @@ flask-marshmallow==0.14.0
 flasgger==0.9.5
 flask-security==3.0.0
 flask-jwt-extended==4.4.4
+flask-restful==0.3.9
 psycopg2-binary==2.9.4
 sqlalchemy==1.4.42
 redis==4.3.4
