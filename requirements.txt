@@ -8,3 +8,4 @@ psycopg2-binary==2.9.4
 sqlalchemy==1.4.42
 redis==4.3.4
 gevent==22.10.1
+pydantic==1.10.2
