@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from src.db.db_postgres import db
 
 
-class User(db.Model):
+class Users(db.Model):
     __tableName__ = 'users'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -16,11 +16,20 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    roles = relationship("user_role")
+    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('roles.id'), nullable=False)
+    roles = relationship("user_role", lazy="dynamic", primaryjoin="user_role.role_id == Users.role_id")
 
     __table_args__ = (
         Index('users_login_index', login),  # composite index on login
     )
 
     def __repr__(self):
-        return f'<User {self.login}>'
+        return f'<Users {self.login}>'
+
+
+#
+#
+# class BookSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Book
+#         include_fk = True

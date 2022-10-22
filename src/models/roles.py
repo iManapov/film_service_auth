@@ -1,11 +1,12 @@
 import uuid
+from typing import List
 
 from sqlalchemy import Index
 from sqlalchemy.dialects.postgresql import UUID
 from src.db.db_postgres import db
 
 
-class Role(db.Model):
+class Roles(db.Model):
     __tableName__ = 'roles'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -16,5 +17,32 @@ class Role(db.Model):
         Index('role_name_index', name),  # composite index on name
     )
 
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
     def __repr__(self):
-        return f'<Role {self.name}>'
+        return 'Roles(name=%s, description=%s)' % (self.name, self.description)
+
+    def json(self):
+        return {'name': self.name, 'description': self.description}
+
+    @classmethod
+    def find_by_name(cls, name) -> "Roles":
+        return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_by_id(cls, _id) -> "Roles":
+        return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_all(cls) -> List["Roles"]:
+        return cls.query.all()
+
+    def save_to_db(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self) -> None:
+        db.session.delete(self)
+        db.session.commit()
