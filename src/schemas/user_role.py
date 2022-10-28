@@ -1,8 +1,9 @@
-from src.core.ma import ma
+from src.extensions import ma
 from src.models.user_role import UserRole
 
 
 class UserRoleSchema(ma.SQLAlchemyAutoSchema):
+
     class Meta:
         model = UserRole
         load_instance = True

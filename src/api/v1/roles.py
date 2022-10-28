@@ -1,44 +1,44 @@
 from flask import request
 from flask_restful import Resource, reqparse
 
-from src.models.roles import Roles
-from src.schemas.roles import RolesSchema
+from src.models.roles import Role
+from src.schemas.roles import RoleSchema
 
 ROLE_NOT_FOUND = "Role not found."
 ROLE_NAME_AlREADY_EXISTS = 'Role "{}" already exists'
 
 
 # role_ns = Namespace('role', description='Role related operations')
-# roles_ns = Namespace('roles', description='Roles related operations')
+# roles_ns = Namespace('roles', description='Role related operations')
 
-role_schema = RolesSchema()
-role_list_schema = RolesSchema(many=True)
+role_schema = RoleSchema()
+role_list_schema = RoleSchema(many=True)
 
 
 #Model required by flask_restplus for expect
-# role = roles_ns.model('Roles', {
+# role = roles_ns.model('Role', {
 #     'name': fields.String('Name of the Role'),
 #     'description': fields.String
 # })
 
 
-class Role(Resource):
+class Roles(Resource):
 
     def get(self, id):
-        role_data = Roles.find_by_id(id)
+        role_data = Role.find_by_id(id)
         if role_data:
             return role_schema.dump(role_data)
         return {'message': ROLE_NOT_FOUND}, 404
 
     def delete(self, id):
-        role_data = Roles.find_by_id(id)
+        role_data = Role.find_by_id(id)
         if role_data:
             role_data.delete_from_db()
             return {'message': "Role Deleted successfully"}, 200
         return {'message': ROLE_NOT_FOUND}, 404
 
     def put(self, id):
-        role_data = Roles.find_by_id(id)
+        role_data = Role.find_by_id(id)
         role_json = request.get_json()
 
         if role_data:
@@ -53,7 +53,7 @@ class Role(Resource):
 
 class RoleList(Resource):
     def get(self):
-        return role_list_schema.dump(Roles.find_all()), 200
+        return role_list_schema.dump(Role.find_all()), 200
 
     def post(self):
         role_json = request.get_json()
