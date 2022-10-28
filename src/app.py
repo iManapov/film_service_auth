@@ -29,6 +29,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Конфигурация Flask-JWT-Extended
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'super-secret'
+app.config['SECRET_KEY'] = 'super-secret'
 
 
 def register_extensions(app):
