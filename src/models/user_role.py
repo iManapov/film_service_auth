@@ -1,5 +1,5 @@
-
 import uuid
+
 
 from sqlalchemy import ForeignKey, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import UUID
