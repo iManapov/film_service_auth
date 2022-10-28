@@ -3,10 +3,12 @@ from typing import List
 
 from sqlalchemy import Index
 from sqlalchemy.dialects.postgresql import UUID
+from flask_security import RoleMixin
+
 from src.db.db_postgres import db
 
 
-class Roles(db.Model):
+class Role(db.Model, RoleMixin):
     __tableName__ = 'roles'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -28,15 +30,15 @@ class Roles(db.Model):
         return {'name': self.name, 'description': self.description}
 
     @classmethod
-    def find_by_name(cls, name) -> "Roles":
+    def find_by_name(cls, name) -> "Role":
         return cls.query.filter_by(name=name).first()
 
     @classmethod
-    def find_by_id(cls, _id) -> "Roles":
+    def find_by_id(cls, _id) -> "Role":
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def find_all(cls) -> List["Roles"]:
+    def find_all(cls) -> List["Role"]:
         return cls.query.all()
 
     def save_to_db(self) -> None:
@@ -46,3 +48,6 @@ class Roles(db.Model):
     def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()
+
+    # def __repr__(self):
+    #     return f'<Role {self.name}>'
