@@ -39,7 +39,6 @@ def register_extensions(app):
 register_extensions(app)
 from src.api.v1.user import SignUp, Login, RefreshTokens, Logout
 from src.api.v1.roles import Roles, RoleList
-from src.models.user_role import UserRole
 
 from src.utils import user_datastore
 

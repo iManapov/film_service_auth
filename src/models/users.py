@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('role.id'), nullable=False)
+    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('roles.id'), nullable=False)
     # roles = relationship("user_role", lazy="dynamic", primaryjoin="user_role.role_id == users.role_id")
     roles = relationship("UserRole")
     active = db.Column(db.Boolean())
