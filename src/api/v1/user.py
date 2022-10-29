@@ -189,7 +189,7 @@ class Logout(Resource):
     @jwt_required
     def delete(self):
         jti = get_jwt()["jti"]
-        jwt_redis_blocklistset(jti, "", ex=ACCESS_EXPIRES)
+        jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
         # поместить старый access-токен в блок-лист
         # поместить старый refresh-токен в блок-лист
         return {"msg": "User's token revoked"}, 200
