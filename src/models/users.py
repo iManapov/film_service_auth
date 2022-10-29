@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from flask_security import UserMixin
 
 from src.db.db_postgres import db
+from src.models.user_role import UserRole
 
 
 class User(db.Model, UserMixin):
@@ -13,15 +14,11 @@ class User(db.Model, UserMixin):
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     login = db.Column(db.String, unique=True, nullable=False)
-    # password = db.Column(db.String, nullable=False)
     password = db.Column(db.LargeBinary, nullable=False)
-
     email = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('roles.id'), nullable=False)
-    # roles = relationship("user_role", lazy="dynamic", primaryjoin="user_role.role_id == users.role_id")
-    roles = relationship("UserRole")
+    roles = db.relationship("UserRole")
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
 
