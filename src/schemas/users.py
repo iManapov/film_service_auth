@@ -7,4 +7,5 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         model = User
         load_instance = True
         load_only = ("users",)
-        # include_fk= True
+        fields = ("id", "login", "email", "first_name",
+                  "last_name", "roles", "active", "confirmed_at")

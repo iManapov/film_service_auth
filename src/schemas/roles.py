@@ -12,4 +12,3 @@ class RoleSchema(ma.SQLAlchemySchema):
         model = Role
         load_instance = True
         load_only = ("roles",)
-        # include_fk= True
