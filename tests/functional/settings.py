@@ -1,22 +1,23 @@
-from pydantic import BaseSettings, Field, PostgresDsn
+from pydantic import BaseSettings, Field
 
 
-class TestSettings(BaseSettings):
-    """Конфиг тестов"""
+class Settings(BaseSettings):
+    """Конфиг для тестов сервиса авторизации"""
 
-    redis_host: str = Field("0.0.0.0", env="REDIS_HOST")
+    redis_host: str = Field('localhost', env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
 
-    pg_dsn: PostgresDsn = 'postgres://{user}:{password}@{host}:{port}/{dbname}'.format(user=Field('app', env="DB_USER"),
-                                                                                       password=Field('123qwe', env="DB_PASSWORD"),
-                                                                                       host=Field('localhost', env="DB_HOST"),
-                                                                                       port=Field('5432', env="DB_PORT"),
-                                                                                       dbname=Field('movies_database', env="DB_NAME"))
-    service_url: str = Field("http://localhost:5000", env="FAST_API_URL")
+    pg_host: str = Field('localhost', env="PG_HOST")
+    pg_port: int = Field(5432, env="PG_PORT")
+    pg_db_name: str = Field('auth_service_db', env="PG_DB_NAME")
+    pg_user: str = Field(..., env="PG_USER")
+    pg_pass: str = Field(..., env="PG_PASSWORD")
+
+    service_url: str = Field("http://nginx:80", env="FLASK_URL")
 
     class Config:
         env_file = "tests/functional/.env"
         env_file_encoding = "utf-8"
 
 
-test_settings = TestSettings()
+test_settings = Settings()
