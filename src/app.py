@@ -11,7 +11,7 @@ from flasgger import Swagger
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from src.extensions import ma
+from src.extensions import ma, jwt
 from src.db.db_postgres import db, init_db
 
 
@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 api = Api(app, prefix='/api/v1')
 swagger = Swagger(app)
-jwt = JWTManager(app)
+# jwt = JWTManager(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -35,6 +35,7 @@ app.config['SECRET_KEY'] = 'super-secret'
 def register_extensions(app):
     """Register Flask extensions."""
     ma.init_app(app)
+    jwt.init_app(app)
 
 
 register_extensions(app)
