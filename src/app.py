@@ -11,7 +11,7 @@ from flasgger import Swagger
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from src.extensions import ma
+from src.extensions import ma, jwt
 from src.db.db_postgres import db, init_db
 from src.api.v1.user import SignUp, Login, RefreshTokens, Logout, ChangeCreds, \
     LoginHistory, UserRoles, ChangeUserRoles
@@ -52,6 +52,7 @@ api.add_resource(RoleList, "/role/")
 def register_extensions(app):
     """Register Flask extensions."""
     ma.init_app(app)
+    jwt.init_app(app)
 
 
 def main():
