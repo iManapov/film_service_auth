@@ -7,7 +7,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from flask_security import RoleMixin
 
 from src.db.db_postgres import db
-from src.models.user_role import UserRole
 
 
 class Role(db.Model, RoleMixin):
@@ -16,7 +15,6 @@ class Role(db.Model, RoleMixin):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String, nullable=False)
-    users = db.relationship("UserRole")
 
     __table_args__ = (
         Index('role_name_index', name),  # composite index on name
@@ -51,6 +49,3 @@ class Role(db.Model, RoleMixin):
     def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()
-
-    # def __repr__(self):
-    #     return f'<Role {self.name}>'

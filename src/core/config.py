@@ -4,6 +4,10 @@ from pydantic import BaseSettings, Field
 class Settings(BaseSettings):
     """Конфиг сервиса авторизации"""
 
+    service_host: str = Field('localhost', env="SERVICE_HOST")
+    service_port: str = Field('5000', env="SERVICE_PORT")
+    debug: bool = Field(False, env="DEBUG")
+
     redis_host: str = Field('localhost', env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
 

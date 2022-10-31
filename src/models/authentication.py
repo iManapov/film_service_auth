@@ -10,7 +10,7 @@ class Authentication(db.Model):
     __tableName__ = 'authentication'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
     user_agent = db.Column(db.String, nullable=True)
     datetime = db.Column(db.DateTime, default=datetime.now)
 
@@ -18,3 +18,9 @@ class Authentication(db.Model):
         Index('authentication_user_id_index', user_id),  # composite index on user_id
     )
 
+    @classmethod
+    def get_login_history(cls, _user_id):
+        return cls.query.filter_by(user_id=_user_id).all()
+
+    def as_dict(self) -> dict:
+        return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
