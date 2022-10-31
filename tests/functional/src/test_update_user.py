@@ -3,7 +3,7 @@ import pytest
 from http import HTTPStatus
 
 from tests.functional.testdata.user import test_users, change_creds_data
-from tests.functional.testdata.role import test_roles
+from tests.functional.testdata.roles import test_roles
 
 
 pytestmark = pytest.mark.asyncio

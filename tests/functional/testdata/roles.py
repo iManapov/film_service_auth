@@ -70,3 +70,14 @@ role_test_data_for_id = [
     ),
 
 ]
+
+test_roles = [
+    {
+        "name": "Test role",
+        "description": "Role for testing auth service"
+    },
+    {
+        "name": "Test role 2",
+        "description": "Role for testing auth service"
+    }
+]
