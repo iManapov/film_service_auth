@@ -3,8 +3,8 @@ version: '3'
 services:
 
   api:
-    container_name: flask
-    build: .
+    build: ../../.
+    image: functional-api-1
     ports:
       - "5000:5000"
     depends_on:
@@ -13,8 +13,17 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  tests:
+    image: functional-api-1
+    entrypoint: >
+      sh -c "pip install -r ./tests/functional/requirements.txt
+      && python3 ./tests/functional/utils/wait_for_es.py
+      && python3 ./tests/functional/utils/wait_for_redis.py
+      && pytest ./tests/functional/src"
+    depends_on:
+      - api
+
   redis:
-    container_name: redis_auth
     image: redis:7.0.5
     ports:
       - "6379:6379"
@@ -23,12 +32,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - redis_data:/data
 
   elasticsearch:
-    container_name: elasticsearch_auth
-    image: elasticsearch:8.4.1 #docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: elasticsearch:8.4.1
     ports:
       - "9200:9200"
     environment:
@@ -40,22 +46,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    volumes:
-      - elasticsearch_data:/elasticsearch/data
 
   nginx:
     image: nginx:1.23.1
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/configs:/etc/nginx/conf.d:ro
-      - ./data:/data/:ro
+      - ../.././nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../.././nginx/configs:/etc/nginx/conf.d:ro
+      - ../.././data:/data/:ro
     depends_on:
       - api
     ports:
       - "80:80"
-
-volumes:
-  elasticsearch_data:
-    external:
-      name: elasticsearch_data
-  redis_data:
