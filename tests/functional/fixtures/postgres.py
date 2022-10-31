@@ -37,5 +37,5 @@ async def pg_clear_data(postgre_connection: sqlalchemy.engine.base.Engine):
     Срабатывает один раз в начале тестов
     """
     postgre_connection.execute("DELETE FROM auth_service.users CASCADE;")
-    postgre_connection.execute("DELETE FROM auth_service.role CASCADE;")
+    postgre_connection.execute("DELETE FROM auth_service.roles CASCADE;")
     postgre_connection.execute("DELETE FROM auth_service.user_role CASCADE;")

@@ -1,5 +1,5 @@
 from src.extensions import ma
-from src.models.roles import Role
+from src.models.roles import Roles
 
 
 class RoleSchema(ma.SQLAlchemySchema):
@@ -9,6 +9,6 @@ class RoleSchema(ma.SQLAlchemySchema):
     description = ma.auto_field()
 
     class Meta:
-        model = Role
+        model = Roles
         load_instance = True
         load_only = ("roles",)

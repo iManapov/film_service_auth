@@ -1,25 +1,15 @@
 from flask import request
 from flask_restful import Resource, reqparse
+from marshmallow import ValidationError
 
-from src.models.roles import Role
+from src.models.roles import Roles as Role
 from src.schemas.roles import RoleSchema
 
 ROLE_NOT_FOUND = "Role is not found."
 ROLE_NAME_AlREADY_EXISTS = 'Role "{}" already exists'
 
-
-# role_ns = Namespace('role', description='Role related operations')
-# roles_ns = Namespace('roles', description='Role related operations')
-
 role_schema = RoleSchema()
 role_list_schema = RoleSchema(many=True)
-
-
-#Model required by flask_restplus for expect
-# role = roles_ns.model('Role', {
-#     'name': fields.String('Name of the Role'),
-#     'description': fields.String
-# })
 
 
 class Roles(Resource):
@@ -182,9 +172,14 @@ class RoleList(Resource):
                   description: description of role
           404:
             description: Role with same name already exists
+          400:
+            description: ValidationError
         """
         role_json = request.get_json()
-        role_data = role_schema.load(role_json)
+        try:
+            role_data = role_schema.load(role_json)
+        except ValidationError as err:
+            return {'message': err.messages}, 400
         if role_data.find_by_name(role_json['name']):
             return {'message': ROLE_NAME_AlREADY_EXISTS.format(role_json['name'])}, 404
         else:

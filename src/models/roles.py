@@ -9,7 +9,7 @@ from flask_security import RoleMixin
 from src.db.db_postgres import db
 
 
-class Role(db.Model, RoleMixin):
+class Roles(db.Model, RoleMixin):
     __tableName__ = 'roles'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -31,15 +31,15 @@ class Role(db.Model, RoleMixin):
         return {'name': self.name, 'description': self.description}
 
     @classmethod
-    def find_by_name(cls, name) -> "Role":
+    def find_by_name(cls, name) -> "Roles":
         return cls.query.filter_by(name=name).first()
 
     @classmethod
-    def find_by_id(cls, _id) -> "Role":
+    def find_by_id(cls, _id) -> "Roles":
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def find_all(cls) -> List["Role"]:
+    def find_all(cls) -> List["Roles"]:
         return cls.query.all()
 
     def save_to_db(self) -> None:
