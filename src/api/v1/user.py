@@ -154,7 +154,9 @@ class Login(Resource):
             access_token = create_access_token(identity=user.id,
                                                additional_claims=additional_claims)
             jwt_redis_refresh.set(get_jti(refresh_token), str(user.id), ex=REFRESH_EXPIRES)
-            return {'access_token': access_token, 'refresh_token': refresh_token}, 200
+            return {'access_token': access_token,
+                    'refresh_token': refresh_token,
+                    'user_id': str(user.id)}, 200
         return {'error': 'Invalid credentials'}, 400
 
 
@@ -426,9 +428,11 @@ class ChangeUserRoles(Resource):
           400:
             description: Invalid uuid format
         """
-
+        print('Flag1- --------')
         if not (is_uuid(user_id) and is_uuid(role_id)):
+            print('Flag2- --------')
             return {'error': 'Invalid UUID format'}, 400
+        print('Flag3- --------')
         user = User.get_by_id(user_id)
         if not user:
             return {'error': 'No user with specified id'}, 400

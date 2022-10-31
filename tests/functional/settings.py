@@ -10,10 +10,10 @@ class Settings(BaseSettings):
     pg_host: str = Field('localhost', env="PG_HOST")
     pg_port: int = Field(5432, env="PG_PORT")
     pg_db_name: str = Field('auth_service_db', env="PG_DB_NAME")
-    pg_user: str = Field(..., env="PG_USER")
-    pg_pass: str = Field(..., env="PG_PASSWORD")
+    pg_user: str = Field('app', env="PG_USER")
+    pg_pass: str = Field('123qwe', env="PG_PASSWORD")
 
-    service_url: str = Field("http://nginx:80", env="FLASK_URL")
+    service_url: str = Field("http://localhost:5001", env="FLASK_URL")
 
     class Config:
         env_file = "tests/functional/.env"
