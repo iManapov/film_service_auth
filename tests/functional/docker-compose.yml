@@ -3,27 +3,29 @@ version: '3'
 services:
 
   api:
+#    container_name: flask-tests
     build: ../../.
-    image: functional-api-1
+    image: flask-api-1
     ports:
-      - "5000:5000"
+      - "5001:5001"
     depends_on:
       redis:
         condition: service_healthy
-      elasticsearch:
+      postgres:
         condition: service_healthy
 
   tests:
-    image: functional-api-1
+    image: flask-api-1
     entrypoint: >
       sh -c "pip install -r ./tests/functional/requirements.txt
-      && python3 ./tests/functional/utils/wait_for_es.py
-      && python3 ./tests/functional/utils/wait_for_redis.py
       && pytest ./tests/functional/src"
+#           && python3 ./tests/functional/utils/wait_for_es.py
+#           && python3 ./tests/functional/utils/wait_for_redis.py
     depends_on:
       - api
 
   redis:
+#    container_name: redis_auth
     image: redis:7.0.5
     ports:
       - "6379:6379"
@@ -32,20 +34,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - redis_data:/data
 
-  elasticsearch:
-    image: elasticsearch:8.4.1
+  postgres:
+#    container_name: postgres_db
+    image: postgres:13
     ports:
-      - "9200:9200"
+      - "5432:5432"
     environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms200m -Xmx200m
-      - xpack.security.enabled=false
+      - POSTGRES_PASSWORD=123qwe
+      - POSTGRES_USER=app
+      - POSTGRES_DB=auth_service_db
     healthcheck:
-      test: ["CMD", "curl", "localhost:9200/_cat/health"]
+      test: ["CMD-SHELL", "pg_isready", "-d", "auth_service_db"]
       interval: 10s
-      timeout: 5s
-      retries: 10
+      timeout: 30s
+      retries: 5
 
   nginx:
     image: nginx:1.23.1
@@ -57,3 +62,6 @@ services:
       - api
     ports:
       - "80:80"
+
+volumes:
+  redis_data:

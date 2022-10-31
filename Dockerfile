@@ -11,12 +11,12 @@ COPY requirements.txt requirements.txt
 
 RUN  apt-get update \
      && apt-get install -y gcc \
-     && pip install gunicorn\
      && pip install --upgrade pip \
      && pip install -r requirements.txt
 
 COPY . .
 COPY src/core/docker.env src/core/.env
+COPY tests/functional/docker.env tests/functional/.env
 
-ENTRYPOINT ["gunicorn", "src.app:app", "--workers", "4", "--worker-class", \
-            "uvicorn.workers.UvicornH11Worker", "--bind", "0.0.0.0:5000"]
+ENTRYPOINT ["gunicorn", "src.wsgi_app:app", "--workers", "4", \
+            "--worker-class", "gevent", "--bind", "0.0.0.0:5001"]

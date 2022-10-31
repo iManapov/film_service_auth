@@ -6,11 +6,11 @@ services:
     container_name: flask
     build: .
     ports:
-      - "5000:5000"
+      - "5001:5001"
     depends_on:
       redis:
         condition: service_healthy
-      elasticsearch:
+      postgres:
         condition: service_healthy
 
   redis:
@@ -26,22 +26,20 @@ services:
     volumes:
       - redis_data:/data
 
-  elasticsearch:
-    container_name: elasticsearch_auth
-    image: elasticsearch:8.4.1 #docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+  postgres:
+    container_name: postgres_db
+    image: postgres:13
     ports:
-      - "9200:9200"
+      - "5432:5432"
     environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms200m -Xmx200m
-      - xpack.security.enabled=false
+      - POSTGRES_PASSWORD=123qwe
+      - POSTGRES_USER=app
+      - POSTGRES_DB=auth_service_db
     healthcheck:
-      test: ["CMD", "curl", "localhost:9200/_cat/health"]
+      test: ["CMD-SHELL", "pg_isready", "-d", "auth_service_db"]
       interval: 10s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - elasticsearch_data:/elasticsearch/data
+      timeout: 30s
+      retries: 5
 
   nginx:
     image: nginx:1.23.1
@@ -55,7 +53,4 @@ services:
       - "80:80"
 
 volumes:
-  elasticsearch_data:
-    external:
-      name: elasticsearch_data
   redis_data:

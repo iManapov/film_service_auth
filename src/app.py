@@ -62,6 +62,8 @@ def prepare_start():
     db.create_all()
 
 
+prepare_start()
+
+
 if __name__ == '__main__':
-    prepare_start()
     app.run(host=settings.service_host, port=settings.service_port, debug=settings.debug)
