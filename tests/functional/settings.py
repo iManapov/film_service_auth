@@ -2,11 +2,7 @@ from pydantic import BaseSettings, Field
 
 
 class Settings(BaseSettings):
-    """Конфиг сервиса авторизации"""
-
-    service_host: str = Field('localhost', env="SERVICE_HOST")
-    service_port: str = Field('5000', env="SERVICE_PORT")
-    debug: bool = Field(False, env="DEBUG")
+    """Конфиг для тестов сервиса авторизации"""
 
     redis_host: str = Field('localhost', env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
@@ -17,9 +13,11 @@ class Settings(BaseSettings):
     pg_user: str = Field(..., env="PG_USER")
     pg_pass: str = Field(..., env="PG_PASSWORD")
 
+    service_url: str = Field("http://localhost:5001", env="FLASK_URL")
+
     class Config:
-        env_file = "src/core/.env"
+        env_file = "tests/functional/.env"
         env_file_encoding = "utf-8"
 
 
-settings = Settings()
+test_settings = Settings()

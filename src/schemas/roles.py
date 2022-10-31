@@ -1,14 +1,14 @@
-from src.core.ma import ma
-from src.models.roles import Roles
+from src.extensions import ma
+from src.models.roles import Role
 
 
-class RolesSchema(ma.SQLAlchemySchema):
+class RoleSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     name = ma.auto_field()
     description = ma.auto_field()
+
     class Meta:
-        model = Roles
+        model = Role
         load_instance = True
         load_only = ("roles",)
-        # include_fk= True
