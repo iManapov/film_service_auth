@@ -428,11 +428,9 @@ class ChangeUserRoles(Resource):
           400:
             description: Invalid uuid format
         """
-        print('Flag1- --------')
+
         if not (is_uuid(user_id) and is_uuid(role_id)):
-            print('Flag2- --------')
             return {'error': 'Invalid UUID format'}, 400
-        print('Flag3- --------')
         user = User.get_by_id(user_id)
         if not user:
             return {'error': 'No user with specified id'}, 400
