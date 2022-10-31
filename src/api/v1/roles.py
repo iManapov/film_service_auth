@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource, reqparse
 from marshmallow import ValidationError
 
-from src.models.roles import Roles as Role
+from src.models.roles import Role
 from src.schemas.roles import RoleSchema
 
 ROLE_NOT_FOUND = "Role is not found."
