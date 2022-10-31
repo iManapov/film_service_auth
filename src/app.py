@@ -55,13 +55,13 @@ def register_extensions(app):
     jwt.init_app(app)
 
 
-def main():
+def prepare_start():
     register_extensions(app)
     init_db(app)
     app.app_context().push()
     db.create_all()
-    app.run(host=settings.service_host, port=settings.service_port, debug=settings.debug)
 
 
 if __name__ == '__main__':
-    main()
+    prepare_start()
+    app.run(host=settings.service_host, port=settings.service_port, debug=settings.debug)
