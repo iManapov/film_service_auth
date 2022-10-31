@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    roles = db.relationship("Roles", secondary=roles_users,
+    roles = db.relationship("Role", secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime(), default=datetime.now)

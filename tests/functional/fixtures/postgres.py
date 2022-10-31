@@ -36,6 +36,7 @@ async def pg_clear_data(postgre_connection: sqlalchemy.engine.base.Engine):
     Фикстура для удаления данных из таблиц users и roles в Postgres
     Срабатывает один раз в начале тестов
     """
-    postgre_connection.execute("DELETE FROM auth_service.users CASCADE;")
-    postgre_connection.execute("DELETE FROM auth_service.roles CASCADE;")
+    postgre_connection.execute("DELETE FROM auth_service.authentication CASCADE;")
     postgre_connection.execute("DELETE FROM auth_service.user_role CASCADE;")
+    postgre_connection.execute("DELETE FROM auth_service.users CASCADE;")
+    postgre_connection.execute("DELETE FROM auth_service.role CASCADE;")

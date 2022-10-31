@@ -82,3 +82,49 @@ login_test_data = [
         }
     ),
 ]
+
+
+test_users = [
+    {
+        "login": "test1",
+        "password": "pswd1",
+        "email": "test1@sa.com",
+        "first_name": "Bob1",
+        "last_name": "Smith1"
+    },
+    {
+        "login": "test2",
+        "password": "pswd2",
+        "email": "test2@sa.com",
+        "first_name": "Bob2",
+        "last_name": "Smith2"
+    }
+]
+
+
+change_creds_data = [
+    (
+        {
+            "login": "test3",
+            "password": "pswd2",
+            "email": "test3@sa.com",
+            "first_name": "Bob1",
+            "last_name": "Smith1"
+        },
+        {
+            "status": HTTPStatus.OK
+        }
+    ),
+    (
+        {
+            "login": "test2",
+            "password": "pswd1",
+            "email": "test1@sa.com",
+            "first_name": "Bob1",
+            "last_name": "Smith1"
+        },
+        {
+            "status": HTTPStatus.BAD_REQUEST
+        }
+    )
+]
