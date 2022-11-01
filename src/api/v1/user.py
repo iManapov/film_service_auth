@@ -222,6 +222,33 @@ class Logout(Resource):
     """
     @jwt_required(verify_type=False)
     def delete(self):
+        """
+        User logout
+        Provides user logout
+        ---
+        tags:
+          - users
+        parameters:
+          - in: body
+            name: access_token
+            type: string
+            required: true
+        security:
+          BearerAuth:
+            type: http
+            scheme: bearer
+        responses:
+          201:
+            description: A single user item
+            schema:
+              id: User
+              properties:
+                user:
+                  type: string
+                  description: The name of the user
+          422:
+            description: Invalid token
+        """
         token = get_jwt()
         jti = token["jti"]
 

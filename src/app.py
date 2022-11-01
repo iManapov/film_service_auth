@@ -28,10 +28,16 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_SECRET_KEY'] = 'super-secret'
 app.config['SECRET_KEY'] = 'super-secret'
 
+# Конфигурация Swagger
+swagger_config = Swagger.DEFAULT_CONFIG
+swagger_config['swagger_ui_bundle_js'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js'
+swagger_config['swagger_ui_standalone_preset_js'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js'
+swagger_config['jquery_js'] = '//unpkg.com/jquery@2.2.4/dist/jquery.min.js'
+swagger_config['swagger_ui_css'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui.css'
+
 
 api = Api(app, prefix='/api/v1')
-swagger = Swagger(app)
-jwt = JWTManager(app)
+swagger = Swagger(app, config=swagger_config)
 security = Security(app, user_datastore)
 
 

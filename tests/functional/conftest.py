@@ -6,8 +6,8 @@ import pytest
 pytest_plugins = (
     "tests.functional.fixtures.http",
     "tests.functional.fixtures.postgres",
+    "tests.functional.fixtures.redis",
 )
-
 
 @pytest.fixture(scope="session")
 def event_loop():

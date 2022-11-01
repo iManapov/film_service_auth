@@ -20,7 +20,7 @@ def make_post_request(http_session: aiohttp.ClientSession):
     """
     Фикстура для выполнения POST-запроса к API
     """
-    async def inner(url: str, req_body: dict = None, headers: str = None):
+    async def inner(url: str, req_body: dict = None, headers: dict = None):
         url = test_settings.service_url + url
         async with http_session.post(url, json=req_body, headers=headers) as response:
             body = await response.json()

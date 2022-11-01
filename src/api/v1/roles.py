@@ -22,7 +22,7 @@ class Roles(Resource):
         Provides to get role
         ---
         tags:
-          - role
+          - roles
 
         parameters:
           - in: path
@@ -58,7 +58,7 @@ class Roles(Resource):
         Provides to delete role
         ---
         tags:
-          - role
+          - roles
 
         parameters:
           - in: path
@@ -84,7 +84,7 @@ class Roles(Resource):
         Provides to update role
         ---
         tags:
-          - role
+          - roles
 
         parameters:
           - in: path
