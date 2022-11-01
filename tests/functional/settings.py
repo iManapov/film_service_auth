@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     pg_user: str = Field(..., env="PG_USER")
     pg_pass: str = Field(..., env="PG_PASSWORD")
 
-    service_url: str = Field("http://nginx:80", env="FLASK_URL")
+    service_url: str = Field("http://localhost:5001", env="FLASK_URL")
 
     class Config:
         env_file = "tests/functional/.env"
