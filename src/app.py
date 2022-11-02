@@ -1,24 +1,19 @@
 import os
 import sys
 
-from flask import Flask
-from flask_restful import Api
+from flask import Flask, Blueprint
 from flask_security import Security
-from flask_jwt_extended import JWTManager
 from flasgger import Swagger
-
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from src.extensions import ma, jwt
 from src.db.db_postgres import db, init_db
-from src.api.v1.user import SignUp, Login, RefreshTokens, Logout, ChangeCreds, \
-    LoginHistory, UserRoles, ChangeUserRoles
-from src.api.v1.roles import Roles, RoleList
 from src.models.authentication import Authentication
 from src.utils import user_datastore
 from src.core.config import settings
+from src.api.v1.resources import api_v1
 
 
 app = Flask(__name__)
@@ -35,24 +30,12 @@ swagger_config['swagger_ui_standalone_preset_js'] = '//unpkg.com/swagger-ui-dist
 swagger_config['jquery_js'] = '//unpkg.com/jquery@2.2.4/dist/jquery.min.js'
 swagger_config['swagger_ui_css'] = '//unpkg.com/swagger-ui-dist@3/swagger-ui.css'
 
-
-api = Api(app, prefix='/api/v1')
 swagger = Swagger(app, config=swagger_config)
 security = Security(app, user_datastore)
 
-
-# Конфигурация API Flask-restful
-api.add_resource(SignUp, '/user/signup')
-api.add_resource(Login, '/user/login')
-api.add_resource(RefreshTokens, '/user/refresh')
-api.add_resource(Logout, '/user/logout')
-api.add_resource(ChangeCreds, '/user/<string:user_id>/change_credentials')
-api.add_resource(LoginHistory, '/user/<string:user_id>/login_history')
-api.add_resource(UserRoles, '/user/<string:user_id>/roles')
-api.add_resource(ChangeUserRoles, '/user/<string:user_id>/roles/<string:role_id>')
-
-api.add_resource(Roles, '/role/<string:id>')
-api.add_resource(RoleList, "/role/")
+auth_service = Blueprint('auth_service', __name__, url_prefix='/')
+auth_service.register_blueprint(api_v1)
+app.register_blueprint(auth_service)
 
 
 def register_extensions(app):
