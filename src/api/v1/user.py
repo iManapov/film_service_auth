@@ -351,7 +351,16 @@ class LoginHistory(Resource):
             in: path
             type: uuid
             required: true
-            default: all
+          - name: page
+            in: query
+            type: int
+            required: False
+            default: 1
+          - name: size
+            in: query
+            type: int
+            required: False
+            default: 20
         security:
           BearerAuth:
             type: http
@@ -371,7 +380,12 @@ class LoginHistory(Resource):
         """
         if not is_uuid(user_id):
             return {'error': 'Invalid UUID format'}, 400
-        history = Authentication.get_login_history(user_id)
+        try:
+            page = int(request.args.get('page', 1))
+            size = int(request.args.get('size', 20))
+        except ValueError:
+            return {'error': 'Page and size query parameters must be integer'}, 400
+        history = Authentication.get_login_history(user_id, page=page, size=size)
         return {'result': [x.as_dict() for x in history]}, 200
 
 

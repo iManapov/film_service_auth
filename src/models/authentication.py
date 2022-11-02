@@ -19,8 +19,8 @@ class Authentication(db.Model):
     )
 
     @classmethod
-    def get_login_history(cls, _user_id):
-        return cls.query.filter_by(user_id=_user_id).all()
+    def get_login_history(cls, user_id, page, size):
+        return cls.query.filter_by(user_id=user_id).order_by(cls.datetime.desc()).paginate(page=page, per_page=size)
 
     def as_dict(self) -> dict:
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
