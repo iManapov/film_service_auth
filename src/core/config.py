@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     pg_pass: str = Field(..., env="PG_PASSWORD")
 
     class Config:
-        env_file = "src/core/.env"
+        env_file = "core/.env"
         env_file_encoding = "utf-8"
 
 

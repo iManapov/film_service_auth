@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime(), default=datetime.now)
+    is_administrator = db.Column(db.Boolean(), default=False)
 
     __table_args__ = (
         Index('users_login_index', login),  # composite index on login
