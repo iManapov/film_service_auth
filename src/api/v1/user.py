@@ -1,3 +1,5 @@
+from functools import wraps
+
 import jwt
 from datetime import timedelta
 from http import HTTPStatus
@@ -6,7 +8,7 @@ from flask import jsonify
 from flask_restful import Resource, request
 from flask_security.utils import hash_password
 from flask_jwt_extended import create_access_token, create_refresh_token, \
-    jwt_required, get_jwt_identity, get_jti, get_jwt
+    jwt_required, get_jwt_identity, get_jti, get_jwt, verify_jwt_in_request
 from flasgger import swag_from
 
 from sqlalchemy.exc import IntegrityError
@@ -18,7 +20,7 @@ from src.models.authentication import Authentication
 from src.models.roles import Role
 from src.utils.db import SQLAlchemy
 from src.utils.user_datastore import user_datastore
-from src.utils.security import get_hash, check_password
+from src.utils.security import get_hash, check_password, admin_required
 from src.schemas.users import UserSchema
 from src.utils.uuid_checker import is_uuid
 from src.extensions import jwt
@@ -151,7 +153,9 @@ class Login(Resource):
             db.session.commit()
             # сохранять refresh-токен в базе
             jti_refresh = get_jti(refresh_token)
-            additional_claims = {"jti_refresh": jti_refresh}
+            additional_claims = {"jti_refresh": jti_refresh,
+                                 "is_administrator": user.is_administrator
+                                 }
             access_token = create_access_token(identity=user.id,
                                                additional_claims=additional_claims)
             jwt_redis_refresh.set(get_jti(refresh_token), str(user.id), ex=REFRESH_EXPIRES)
@@ -437,6 +441,7 @@ class ChangeUserRoles(Resource):
     """API-view для изменения ролей пользователя."""
 
     @jwt_required()
+    @admin_required()
     def post(self, user_id, role_id):
         """
         Add role to user
@@ -484,6 +489,7 @@ class ChangeUserRoles(Resource):
         return {'msg': 'Success'}, HTTPStatus.OK
 
     @jwt_required()
+    @admin_required()
     def delete(self, user_id, role_id):
         """
         Delete role from user

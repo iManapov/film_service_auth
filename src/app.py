@@ -5,6 +5,8 @@ from flask import Flask, Blueprint
 from flask_security import Security
 from flasgger import Swagger
 
+from src.utils.create_user import init_create_user
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
@@ -42,6 +44,7 @@ def register_extensions(app):
     """Register Flask extensions."""
     ma.init_app(app)
     jwt.init_app(app)
+    init_create_user(app)
 
 
 def prepare_start():
