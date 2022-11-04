@@ -13,8 +13,3 @@
  Описание запуска тестов и docker находится в файле
  
  https://github.com/san100791/Auth_sprint_1/blob/main/tests/functional/README.md
- 
- Перед запуском приложения вне докера необходимо применить миграции БД
- из каталога с файлом app.py:
- 
-`  flask db upgrade`
