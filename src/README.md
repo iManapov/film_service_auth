@@ -34,3 +34,10 @@
 
 Для запуска api необходимо выполнить команду
 ```docker compose up --build```
+
+## Создание суперпользователя
+Для создания суперпользователя необходимо выполнить команду:
+```
+cd src
+flask create-user login_example password_example example@email.ru
+```
