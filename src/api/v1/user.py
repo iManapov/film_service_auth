@@ -93,14 +93,14 @@ class SignUp(Resource):
         try:
             data = request.get_json()
             if (data.get("login") and data.get("password") and data.get("email")) is None:
-                return {'error': 'Credentials required: login, email and password'}, HTTPStatus.BAD_REQUEST
+                return {"error": "Credentials required: login, email and password"}, HTTPStatus.BAD_REQUEST
             hash_ = get_hash(data["password"])
-            data['password'] = hash_
+            data["password"] = hash_
             user_datastore.create_user(**data)
             db.session.commit()
-            return {'user': data['login']}, HTTPStatus.CREATED
+            return {"user": data["login"]}, HTTPStatus.CREATED
         except IntegrityError:
-            return {'error': 'Login or email already exist or missing required data'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Login or email already exist or missing required data"}, HTTPStatus.BAD_REQUEST
 
 
 class Login(Resource):
@@ -143,10 +143,10 @@ class Login(Resource):
         data = request.get_json()
         user_agent = str(request.user_agent)
         if not data:
-            return {'error': 'Credentials required'}, HTTPStatus.BAD_REQUEST
-        user = user_datastore.find_user(login=data['login'])
+            return {"error": "Credentials required"}, HTTPStatus.BAD_REQUEST
+        user = user_datastore.find_user(login=data["login"])
 
-        if user and check_password(data['password'], user.password):
+        if user and check_password(data["password"], user.password):
             refresh_token = create_refresh_token(identity=user.id)
             auth_hist = Authentication(user_id=user.id, user_agent=user_agent)
             db.session.add(auth_hist)
@@ -159,10 +159,10 @@ class Login(Resource):
             access_token = create_access_token(identity=user.id,
                                                additional_claims=additional_claims)
             jwt_redis_refresh.set(get_jti(refresh_token), str(user.id), ex=REFRESH_EXPIRES)
-            return {'access_token': access_token,
-                    'refresh_token': refresh_token,
-                    'user_id': str(user.id)}, HTTPStatus.OK
-        return {'error': 'Invalid credentials'}, HTTPStatus.BAD_REQUEST
+            return {"access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "user_id": str(user.id)}, HTTPStatus.OK
+        return {"error": "Invalid credentials"}, HTTPStatus.BAD_REQUEST
 
 
 class RefreshTokens(Resource):
@@ -216,8 +216,8 @@ class RefreshTokens(Resource):
 
             jwt_redis_refresh.set(jti_refresh, identity, ex=REFRESH_EXPIRES)
         else:
-            return {'error': 'Token is invalid'}, HTTPStatus.BAD_REQUEST
-        return {'access_token': access_token, 'refresh_token': refresh_token}, HTTPStatus.OK
+            return {"error": "Token is invalid"}, HTTPStatus.BAD_REQUEST
+        return {"access_token": access_token, "refresh_token": refresh_token}, HTTPStatus.OK
 
 
 class Logout(Resource):
@@ -321,23 +321,23 @@ class ChangeCreds(Resource):
         """
 
         if not is_uuid(user_id):
-            return {'error': 'Invalid UUID format'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         try:
             data = request.get_json()
             if not data:
-                return {'msg': 'Empty data'}, HTTPStatus.BAD_REQUEST
+                return {"msg": "Empty data"}, HTTPStatus.BAD_REQUEST
             user = User.get_by_id(user_id)
             if not user:
-                return {'error': 'No user with specified id'}, HTTPStatus.BAD_REQUEST
+                return {"error": "No user with specified id"}, HTTPStatus.BAD_REQUEST
             for key, value in data.items():
-                if key == 'password':
+                if key == "password":
                     hash_ = get_hash(data["password"])
                     value = hash_
                 setattr(user, key, value)
             db.session.commit()
-            return {'msg': 'User updated', 'result': user_schema.dump(user)}, HTTPStatus.OK
+            return {"msg": "User updated", "result": user_schema.dump(user)}, HTTPStatus.OK
         except IntegrityError:
-            return {'error': 'Login or email already exist'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Login or email already exist"}, HTTPStatus.BAD_REQUEST
 
 
 class LoginHistory(Resource):
@@ -384,14 +384,14 @@ class LoginHistory(Resource):
             description: Invalid uuid
         """
         if not is_uuid(user_id):
-            return {'error': 'Invalid UUID format'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         try:
-            page = int(request.args.get('page', 1))
-            size = int(request.args.get('size', 20))
+            page = int(request.args.get("page", 1))
+            size = int(request.args.get("size", 20))
         except ValueError:
-            return {'error': 'Page and size query parameters must be integer'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Page and size query parameters must be integer"}, HTTPStatus.BAD_REQUEST
         history = Authentication.get_login_history(user_id, page=page, size=size)
-        return {'result': [x.as_dict() for x in history]}, HTTPStatus.OK
+        return {"result": [x.as_dict() for x in history]}, HTTPStatus.OK
 
 
 class UserRoles(Resource):
@@ -430,11 +430,11 @@ class UserRoles(Resource):
         """
 
         if not is_uuid(user_id):
-            return {'error': 'Invalid UUID format'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         user = User.get_by_id(user_id)
         if not user:
-            return {'error': 'No user with specified id'}, HTTPStatus.BAD_REQUEST
-        return {'result': [x.json() for x in user.roles]}, HTTPStatus.OK
+            return {"error": "No user with specified id"}, HTTPStatus.BAD_REQUEST
+        return {"result": [x.json() for x in user.roles]}, HTTPStatus.OK
 
 
 class ChangeUserRoles(Resource):
@@ -477,16 +477,16 @@ class ChangeUserRoles(Resource):
         """
 
         if not (is_uuid(user_id) and is_uuid(role_id)):
-            return {'error': 'Invalid UUID format'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         user = User.get_by_id(user_id)
         if not user:
-            return {'error': 'No user with specified id'}, HTTPStatus.BAD_REQUEST
+            return {"error": "No user with specified id"}, HTTPStatus.BAD_REQUEST
         role = Role.find_by_id(role_id)
         if not role:
-            return {'error': 'No role with specified id'}, HTTPStatus.BAD_REQUEST
+            return {"error": "No role with specified id"}, HTTPStatus.BAD_REQUEST
         user_datastore.add_role_to_user(user, role)
         db.session.commit()
-        return {'msg': 'Success'}, HTTPStatus.OK
+        return {"msg": "Success"}, HTTPStatus.OK
 
     @jwt_required()
     @admin_required()
@@ -525,13 +525,13 @@ class ChangeUserRoles(Resource):
         """
 
         if not (is_uuid(user_id) and is_uuid(role_id)):
-            return {'error': 'Invalid UUID format'}, HTTPStatus.BAD_REQUEST
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         user = User.get_by_id(user_id)
         if not user:
-            return {'error': 'No user with specified id'}, HTTPStatus.BAD_REQUEST
+            return {"error": "No user with specified id"}, HTTPStatus.BAD_REQUEST
         role = Role.find_by_id(role_id)
         if not role:
-            return {'error': 'No role with specified id'}, HTTPStatus.BAD_REQUEST
+            return {"error": "No role with specified id"}, HTTPStatus.BAD_REQUEST
         user_datastore.remove_role_from_user(user, role)
         db.session.commit()
-        return {'msg': 'Success'}, HTTPStatus.OK
+        return {"msg": "Success"}, HTTPStatus.OK

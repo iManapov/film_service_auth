@@ -8,7 +8,7 @@ from src.models.roles import Role
 from src.schemas.roles import RoleSchema
 
 ROLE_NOT_FOUND = "Role is not found."
-ROLE_NAME_AlREADY_EXISTS = 'Role "{}" already exists'
+ROLE_NAME_AlREADY_EXISTS = "Role '{}' already exists"
 
 role_schema = RoleSchema()
 role_list_schema = RoleSchema(many=True)
@@ -52,7 +52,7 @@ class Roles(Resource):
         role_data = Role.find_by_id(id)
         if role_data:
             return role_schema.dump(role_data)
-        return {'message': ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+        return {"message": ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     def delete(self, id):
         """
@@ -77,8 +77,8 @@ class Roles(Resource):
         role_data = Role.find_by_id(id)
         if role_data:
             role_data.delete_from_db()
-            return {'message': "Role Deleted successfully"}, HTTPStatus.OK
-        return {'message': ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {"message": "Role Deleted successfully"}, HTTPStatus.OK
+        return {"message": ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
     def put(self, id):
         """
@@ -115,10 +115,10 @@ class Roles(Resource):
         role_json = request.get_json()
 
         if role_data:
-            role_data.name = role_json['name']
-            role_data.description = role_json['description']
+            role_data.name = role_json["name"]
+            role_data.description = role_json["description"]
         else:
-            return {'message': ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
+            return {"message": ROLE_NOT_FOUND}, HTTPStatus.NOT_FOUND
 
         role_data.save_to_db()
         return role_schema.dump(role_data), HTTPStatus.OK
@@ -181,9 +181,9 @@ class RoleList(Resource):
         try:
             role_data = role_schema.load(role_json)
         except ValidationError as err:
-            return {'message': err.messages}, HTTPStatus.BAD_REQUEST
-        if role_data.find_by_name(role_json['name']):
-            return {'message': ROLE_NAME_AlREADY_EXISTS.format(role_json['name'])}, HTTPStatus.NOT_FOUND
+            return {"message": err.messages}, HTTPStatus.BAD_REQUEST
+        if role_data.find_by_name(role_json["name"]):
+            return {"message": ROLE_NAME_AlREADY_EXISTS.format(role_json["name"])}, HTTPStatus.NOT_FOUND
         else:
             role_data.save_to_db()
 

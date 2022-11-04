@@ -10,14 +10,14 @@ from src.db.db_postgres import db
 
 
 class Role(db.Model, RoleMixin):
-    __tableName__ = 'roles'
+    __tableName__ = "roles"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String, nullable=False)
 
     __table_args__ = (
-        Index('role_name_index', name),  # composite index on name
+        Index("role_name_index", name),  # composite index on name
     )
 
     def __init__(self, name, description):
@@ -25,10 +25,10 @@ class Role(db.Model, RoleMixin):
         self.description = description
 
     def __repr__(self):
-        return 'Roles(name=%s, description=%s)' % (self.name, self.description)
+        return "Roles(name=%s, description=%s)" % (self.name, self.description)
 
     def json(self):
-        return {'name': self.name, 'description': self.description}
+        return {"name": self.name, "description": self.description}
 
     @classmethod
     def find_by_name(cls, name) -> "Role":
