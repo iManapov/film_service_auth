@@ -7,8 +7,6 @@ from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 
-from src.utils.create_user import init_create_user
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
@@ -18,6 +16,7 @@ from src.models.authentication import Authentication
 from src.utils import user_datastore
 from src.core.config import settings
 from src.api.v1.resources import api_v1
+from src.utils.create_user import init_create_user
 
 
 app = Flask(__name__)
@@ -49,12 +48,9 @@ def register_extensions(app):
     """Register Flask extensions."""
     ma.init_app(app)
     jwt.init_app(app)
-<<<<<<< HEAD
     db.init_app(app)
     migrate.init_app(app, db)
-=======
     init_create_user(app)
->>>>>>> 6ba477b728f3cda12084fa038ff9c441ed79fbbc
 
 
 def prepare_start():
