@@ -17,6 +17,13 @@ class Settings(BaseSettings):
     pg_user: str = Field(..., env="PG_USER")
     pg_pass: str = Field(..., env="PG_PASSWORD")
 
+    # Ограничения количества запросов пользователей к сервису
+    rate_limits = [
+        "200 per day", # 200 запросов в день
+        "50 per hour", # 50 запросов в час
+        "1 per 10 second", # 1 запрос в 10 секунд
+    ]
+
     class Config:
         env_file = "core/.env"
         env_file_encoding = "utf-8"

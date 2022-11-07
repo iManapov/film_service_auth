@@ -147,15 +147,20 @@ class Login(Resource):
         user = user_datastore.find_user(login=data["login"])
 
         if user and check_password(data["password"], user.password):
-            refresh_token = create_refresh_token(identity=user.id)
+            refresh_token = create_refresh_token(identity=user.id,
+                                                 additional_claims={
+                                                     "user_uuid": user.id
+                                                 })
             auth_hist = Authentication(user_id=user.id, user_agent=user_agent)
             db.session.add(auth_hist)
             db.session.commit()
             # сохранять refresh-токен в базе
             jti_refresh = get_jti(refresh_token)
-            additional_claims = {"jti_refresh": jti_refresh,
-                                 "is_administrator": user.is_administrator
-                                 }
+            additional_claims = {
+                "jti_refresh": jti_refresh,
+                "user_uuid": user.id,
+                "is_administrator": user.is_administrator
+            }
             access_token = create_access_token(identity=user.id,
                                                additional_claims=additional_claims)
             jwt_redis_refresh.set(get_jti(refresh_token), str(user.id), ex=REFRESH_EXPIRES)
@@ -203,13 +208,21 @@ class RefreshTokens(Resource):
         """
         jti = get_jwt()["jti"]
         identity = get_jwt_identity()
+        user = user_datastore.find_user(id=identity)
 
         if jwt_redis_refresh.get(jti) == identity:
             jwt_redis_refresh.delete(jti)
 
-            refresh_token = create_refresh_token(identity=identity)
+            refresh_token = create_refresh_token(identity=identity,
+                                                 additional_claims={
+                                                     "user_uuid": user.id
+                                                 })
             jti_refresh = get_jti(refresh_token)
-            additional_claims = {"jti_refresh": jti_refresh}
+            additional_claims = {
+                "jti_refresh": jti_refresh,
+                "user_uuid": user.id,
+                "is_administrator": user.is_administrator
+            }
             access_token = create_access_token(identity=identity,
                                                fresh=False,
                                                additional_claims=additional_claims)
