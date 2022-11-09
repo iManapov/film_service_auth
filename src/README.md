@@ -13,6 +13,8 @@
 - PG_DB_NAME - название бд Postgres
 - PG_USER - имя пользователя Postgres
 - PG_PASSWORD - пароль Postgres
+- JAEGER_HOST - хост Jaeger 
+- JAEGER_PORT - порт Jaeger
 
 Для запуска api необходимо выполнить команду
 ```python src/app.py```
@@ -31,6 +33,8 @@
 - PG_DB_NAME - название бд Postgres
 - PG_USER - имя пользователя Postgres
 - PG_PASSWORD - пароль Postgres
+- JAEGER_HOST - хост Jaeger 
+- JAEGER_PORT - порт Jaeger
 
 Для запуска api необходимо выполнить команду
 ```docker compose up --build```

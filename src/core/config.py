@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     redis_host: str = Field("localhost", env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
 
+    jaeger_host: str = Field("localhost", env="JAEGER_HOST")
+    jaeger_port: int = Field(6831, env="JAEGER_PORT")
+
     pg_host: str = Field("localhost", env="PG_HOST")
     pg_port: int = Field(5432, env="PG_PORT")
     pg_db_name: str = Field("auth_service_db", env="PG_DB_NAME")

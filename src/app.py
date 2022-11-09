@@ -1,11 +1,12 @@
 import os
 import sys
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from flask_migrate import Migrate
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -17,9 +18,12 @@ from src.utils import user_datastore
 from src.core.config import settings
 from src.api.v1.resources import api_v1
 from src.utils.create_user import init_create_user
+from src.utils.tracing import configure_tracer
 
 
+configure_tracer()
 app = Flask(__name__)
+FlaskInstrumentor().instrument_app(app)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Конфигурация Flask-JWT-Extended
 app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -44,6 +48,13 @@ auth_service.register_blueprint(api_v1)
 app.register_blueprint(auth_service)
 
 limiter.exempt(auth_service)
+
+
+@app.before_request
+def before_request():
+    request_id = request.headers.get('X-Request-Id')
+    if not request_id:
+        raise RuntimeError('request id is required')
 
 
 def register_extensions(app):
