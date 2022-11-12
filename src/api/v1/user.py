@@ -156,7 +156,7 @@ class Login(Resource):
             db.session.commit()
 
             jti_refresh = get_jti(refresh_token)
-            roles = [{str(role.id): role.name} for role in user.roles]
+            roles = [role.name for role in user.roles]
             additional_claims = {
                 "jti_refresh": jti_refresh,
                 "user_uuid": user.id,
@@ -221,7 +221,7 @@ class RefreshTokens(Resource):
                                                      "user_uuid": user.id
                                                  })
             jti_refresh = get_jti(refresh_token)
-            roles = [{str(role.id): role.name} for role in user.roles]
+            roles = [role.name for role in user.roles]
             additional_claims = {
                 "jti_refresh": jti_refresh,
                 "user_uuid": user.id,
