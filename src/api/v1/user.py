@@ -154,7 +154,6 @@ class Login(Resource):
             auth_hist = Authentication(user_id=user.id, user_agent=user_agent)
             db.session.add(auth_hist)
             db.session.commit()
-
             jti_refresh = get_jti(refresh_token)
             roles = [role.name for role in user.roles]
             additional_claims = {

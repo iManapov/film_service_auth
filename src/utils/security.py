@@ -1,6 +1,8 @@
 from functools import wraps
 from http.client import FORBIDDEN
 
+import string
+from secrets import choice as secrets_choice
 import bcrypt
 from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
@@ -46,3 +48,8 @@ def admin_required():
         return decorator
 
     return wrapper
+
+
+def generate_random_string():
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets_choice(alphabet) for _ in range(16))
