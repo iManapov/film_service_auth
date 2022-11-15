@@ -1,5 +1,6 @@
 import os
 import sys
+from http import HTTPStatus
 
 from flask import Flask, Blueprint, request
 from flask_migrate import Migrate
@@ -54,7 +55,7 @@ limiter.exempt(auth_service)
 def before_request():
     request_id = request.headers.get('X-Request-Id')
     if not request_id:
-        raise RuntimeError('request id is required')
+        return {"error": 'Request id header (X-Request-Id) is missing'}, HTTPStatus.BAD_REQUEST
 
 
 def register_extensions(app):
