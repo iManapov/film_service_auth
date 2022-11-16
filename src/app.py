@@ -9,6 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
+from src.core.oauth_config import yandex, google, vk, mail
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
@@ -41,8 +43,17 @@ swagger_config["swagger_ui_css"] = "//unpkg.com/swagger-ui-dist@3/swagger-ui.css
 swagger = Swagger(app, config=swagger_config)
 security = Security(app, user_datastore)
 
+# Конфигурация Postgresql
 conn_string = f"postgresql://{settings.pg_user}:{settings.pg_pass}@{settings.pg_host}:{settings.pg_port}/{settings.pg_db_name}"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"{conn_string}?options=-c%20search_path=auth_service"
+
+# Конфигурация Oauth
+app.config['OAUTH_CREDENTIALS'] = {
+    'yandex': yandex,
+    'google': google,
+    'vk': vk,
+    'mail': mail,
+}
 
 auth_service = Blueprint("auth_service", __name__, url_prefix="/")
 auth_service.register_blueprint(api_v1)
