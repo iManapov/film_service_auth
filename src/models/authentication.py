@@ -92,20 +92,3 @@ def attach_event_listeners() -> None:
 
 
 attach_event_listeners()
-
-'''
-Для применения миграций, необходимо добавить следующий код после миграций alembic:
-
-from src.models.authentication import PARTITION_TABLES_REGISTRY, create_table_login_history_partition_ddl
-.
-.
-.
-def upgrade():
-    .
-    .
-    .
-    # ### end Alembic commands ###
-    for table_class, device_type in PARTITION_TABLES_REGISTRY:
-        ddl = create_table_login_history_partition_ddl(table_class.__table__, device_type)
-        ddl(target=None, bind=op.get_bind())
-'''
