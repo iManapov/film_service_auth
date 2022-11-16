@@ -19,6 +19,7 @@ from src.models.users import User
 from src.models.authentication import Authentication
 from src.models.roles import Role
 from src.utils.db import SQLAlchemy
+from src.utils.tokens import create_and_output_tokens
 from src.utils.user_datastore import user_datastore
 from src.utils.security import get_hash, check_password, admin_required
 from src.schemas.users import UserSchema
@@ -135,6 +136,9 @@ class Login(Resource):
                 refresh_token:
                   type: string
                   description: refresh_token
+                user_id:
+                    type: string
+                    description: user_id
           400:
             description: Invalid credentials
           401:
@@ -147,28 +151,7 @@ class Login(Resource):
         user = user_datastore.find_user(login=data["login"])
 
         if user and check_password(data["password"], user.password):
-            refresh_token = create_refresh_token(identity=user.id,
-                                                 additional_claims={
-                                                     "user_uuid": user.id
-                                                 })
-            auth_hist = Authentication(user_id=user.id, user_agent=user_agent)
-            db.session.add(auth_hist)
-            db.session.commit()
-            jti_refresh = get_jti(refresh_token)
-            roles = [role.name for role in user.roles]
-            additional_claims = {
-                "jti_refresh": jti_refresh,
-                "user_uuid": user.id,
-                "is_administrator": user.is_administrator,
-                "roles": roles
-            }
-            access_token = create_access_token(identity=user.id,
-                                               additional_claims=additional_claims)
-            jwt_redis_refresh.set(get_jti(refresh_token), str(user.id), ex=REFRESH_EXPIRES)
-
-            return {"access_token": access_token,
-                    "refresh_token": refresh_token,
-                    "user_id": str(user.id)}, HTTPStatus.OK
+            return create_and_output_tokens(user, user_agent)
         return {"error": "Invalid credentials"}, HTTPStatus.BAD_REQUEST
 
 

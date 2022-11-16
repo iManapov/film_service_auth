@@ -26,6 +26,7 @@ class SocialAccount(db.Model):
 
     @classmethod
     def get_by_social_id_and_social_name(cls, social_id: str, social_name) -> "SocialAccount":
+        """Return SocialAccount object after filter social_id == social_id and social_name == social_name"""
         return cls.query.filter(and_(cls.social_id == social_id, cls.social_name == social_name)).first()
 
     def save_to_db(self) -> None:

@@ -6,6 +6,9 @@ from flask import current_app, url_for, request, redirect, session
 
 
 class OAuthSignIn(object):
+    """
+    Класс для хранения всех поставщиков данных
+    """
     providers = None
 
     def __init__(self, provider_name):
@@ -15,12 +18,19 @@ class OAuthSignIn(object):
         self.consumer_secret = credentials['secret']
 
     def authorize(self):
+        """Функция, отвечающая за перенаправление пользователя на сайт авторизации поставщика"""
         pass
 
     def callback(self):
+        """
+        Функция, принимает запрос со стороны сервиса поставщика и обрабатывает полученный код авторизации, обменяв
+        его на токен авторизации и с помощью токена происходит обращение к api поставщику за нужными нашему сервису
+        данными.
+        """
         pass
 
     def get_callback_url(self):
+        """Генерация url ссылки на наш сервис после успешной авторизации пользователя на сервисе поставщика"""
         return url_for('api_v1.callback', provider=self.provider_name,
                        _external=True)
 
@@ -71,7 +81,8 @@ class YandexSignIn(OAuthSignIn):
             me['login'],
             me['default_email'],
             me['first_name'],
-            me['last_name']
+            me['last_name'],
+            str(request.user_agent)
         )
 
 
@@ -113,7 +124,8 @@ class GoogleSignIn(OAuthSignIn):
             me['email'].split('@')[0],
             me['email'],
             me['given_name'],
-            me['family_name']
+            me['family_name'],
+            str(request.user_agent)
         )
 
 
@@ -147,7 +159,6 @@ class VkSignIn(OAuthSignIn):
                   'grant_type': 'authorization_code',
                   'redirect_uri': self.get_callback_url(),
                   'v': '5.131'},
-
             decoder=decode_json
         )
         me = oauth_session.get('https://api.vk.com/method/users.get?v=5.131').json()
@@ -159,6 +170,7 @@ class VkSignIn(OAuthSignIn):
             email,
             me['response'][0]['first_name'],
             me['response'][0]['last_name'],
+            str(request.user_agent)
          )
 
 
@@ -208,5 +220,6 @@ app_id={oauth_session.client_id}&session_key={access_token}&sig={sig}''').json()
             me[0]['nick'],
             me[0]['email'],
             me[0]['first_name'],
-            me[0]['last_name']
+            me[0]['last_name'],
+            str(request.user_agent)
         )
