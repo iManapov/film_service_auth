@@ -1,11 +1,13 @@
 import json
 from hashlib import md5
 
-from rauth import OAuth1Service, OAuth2Service
-from flask import current_app, url_for, request, redirect, session
+from rauth import OAuth2Service
+from flask import current_app, url_for, request, redirect
+
+from src.core.config import yandex, vk, google, mail, Providers
 
 
-class OAuthSignIn(object):
+class OAuthSignIn:
     """
     Класс для хранения всех поставщиков данных
     """
@@ -44,16 +46,36 @@ class OAuthSignIn(object):
         return self.providers[provider_name]
 
 
+def decode_json(payload):
+    return json.loads(payload.decode('utf-8'))
+
+
+def get_oauth_session(provider: OAuthSignIn, service, **kwargs):
+    if 'code' not in request.args:
+        return None, None, None, None, None, None
+    data = {
+        'code': request.args['code'],
+        'grant_type': 'authorization_code',
+        'redirect_uri': provider.get_callback_url(),
+    }
+    data.update(**kwargs)
+    oauth_session = service.get_auth_session(
+        data=data,
+        decoder=decode_json
+    )
+    return oauth_session
+
+
 class YandexSignIn(OAuthSignIn):
     def __init__(self):
         super(YandexSignIn, self).__init__('yandex')
         self.service = OAuth2Service(
-            name='yandex',
+            name=Providers.yandex.name,
             client_id=self.consumer_id,
             client_secret=self.consumer_secret,
-            authorize_url='https://oauth.yandex.ru/authorize',
-            access_token_url='https://oauth.yandex.ru/token',
-            base_url='https://oauth.yandex.ru/'
+            authorize_url=yandex.authorize_url,
+            access_token_url=yandex.access_token_url,
+            base_url=yandex.base_url
         )
 
     def authorize(self):
@@ -63,17 +85,7 @@ class YandexSignIn(OAuthSignIn):
         )
 
     def callback(self):
-        def decode_json(payload):
-            return json.loads(payload.decode('utf-8'))
-
-        if 'code' not in request.args:
-            return None, None, None, None, None, None
-        oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
-                  'redirect_uri': self.get_callback_url()},
-            decoder=decode_json
-        )
+        oauth_session = get_oauth_session(self, self.service)
         me = oauth_session.get('https://login.yandex.ru/info?format=json').json()
         return (
             me['client_id'],
@@ -90,12 +102,12 @@ class GoogleSignIn(OAuthSignIn):
     def __init__(self):
         super(GoogleSignIn, self).__init__('google')
         self.service = OAuth2Service(
-            name='google',
+            name=Providers.google.name,
             client_id=self.consumer_id,
             client_secret=self.consumer_secret,
-            authorize_url='https://accounts.google.com/o/oauth2/v2/auth',
-            access_token_url='https://oauth2.googleapis.com/token',
-            base_url='https://accounts.google.com/'
+            authorize_url=google.authorize_url,
+            access_token_url=google.access_token_url,
+            base_url=google.base_url
         )
 
     def authorize(self):
@@ -106,17 +118,7 @@ class GoogleSignIn(OAuthSignIn):
         )
 
     def callback(self):
-        def decode_json(payload):
-            return json.loads(payload.decode('utf-8'))
-
-        if 'code' not in request.args:
-            return None, None, None, None, None, None
-        oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
-                  'redirect_uri': self.get_callback_url()},
-            decoder=decode_json
-        )
+        oauth_session = get_oauth_session(self, self.service)
         me = oauth_session.get('https://openidconnect.googleapis.com/v1/userinfo').json()
         return (
             me['sub'],
@@ -133,12 +135,12 @@ class VkSignIn(OAuthSignIn):
     def __init__(self):
         super(VkSignIn, self).__init__('vk')
         self.service = OAuth2Service(
-            name='vk',
+            name=Providers.vk.name,
             client_id=self.consumer_id,
             client_secret=self.consumer_secret,
-            authorize_url='https://oauth.vk.com/authorize',
-            access_token_url='https://oauth.vk.com/access_token',
-            base_url='https://oauth.vk.com/'
+            authorize_url=vk.authorize_url,
+            access_token_url=vk.access_token_url,
+            base_url=vk.base_url
         )
 
     def authorize(self):
@@ -149,18 +151,8 @@ class VkSignIn(OAuthSignIn):
         )
 
     def callback(self):
-        def decode_json(payload):
-            return json.loads(payload.decode('utf-8'))
+        oauth_session = get_oauth_session(self, self.service, v='5.131')
 
-        if 'code' not in request.args:
-            return None, None, None, None, None, None
-        oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
-                  'redirect_uri': self.get_callback_url(),
-                  'v': '5.131'},
-            decoder=decode_json
-        )
         me = oauth_session.get('https://api.vk.com/method/users.get?v=5.131').json()
         email = json.loads(oauth_session.access_token_response.content.decode("utf-8"))['email']
         return (
@@ -171,21 +163,21 @@ class VkSignIn(OAuthSignIn):
             me['response'][0]['first_name'],
             me['response'][0]['last_name'],
             str(request.user_agent)
-         )
+        )
 
 
 class MailSignIn(OAuthSignIn):
     def __init__(self):
         super(MailSignIn, self).__init__('mail')
         self.service = OAuth2Service(
-            name='mail',
+            name=Providers.mail.name,
             client_id=self.consumer_id,
             client_secret=self.consumer_secret,
-            authorize_url='https://connect.mail.ru/oauth/authorize',
-            access_token_url='https://connect.mail.ru/oauth/token',
-            base_url='https://connect.mail.ru'
+            authorize_url=mail.authorize_url,
+            access_token_url=mail.access_token_url,
+            base_url=mail.base_url
         )
-        self.private_key = 'e3628e4a124e0e4f9b2ff939a8760219'
+        self.private_key = mail.private_key
 
     def authorize(self):
         return redirect(self.service.get_authorize_url(
@@ -194,18 +186,7 @@ class MailSignIn(OAuthSignIn):
         )
 
     def callback(self):
-        def decode_json(payload):
-            return json.loads(payload.decode('utf-8'))
-
-        if 'code' not in request.args:
-            return None, None, None, None, None, None
-        oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
-                  'redirect_uri': self.get_callback_url()},
-
-            decoder=decode_json
-        )
+        oauth_session = get_oauth_session(self, self.service)
         access_token = oauth_session.access_token
         x_mailru_vid = json.loads(oauth_session.access_token_response.content.decode("utf-8"))['x_mailru_vid']
         sig_text = x_mailru_vid.encode() + f'app_id={oauth_session.client_id}'.encode() + 'method=users.getInfo'.encode() + \
