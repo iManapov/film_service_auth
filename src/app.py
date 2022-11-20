@@ -9,7 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
-# from src.core.oauth_config import yandex, google, vk, mail
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -17,9 +16,8 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from src.core.oauth_config import yandex, google, vk, mail
 from src.extensions import ma, jwt, migrate, limiter
 from src.db.db_postgres import db, init_db
-from src.models.authentication import Authentication
 from src.utils import user_datastore
-from src.core.config import settings
+from src.core.config import settings, yandex, vk, google, mail
 from src.api.v1.resources import api_v1
 from src.utils.create_user import init_create_user
 from src.utils.tracing import configure_tracer
@@ -48,10 +46,22 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"{conn_string}?options=-c%20search_path
 
 # Конфигурация Oauth
 app.config['OAUTH_CREDENTIALS'] = {
-    'yandex': yandex,
-    'google': google,
-    'vk': vk,
-    'mail': mail,
+    'yandex': {
+        'id': yandex.id,
+        'secret': yandex.secret,
+    },
+    'google': {
+        'id': google.id,
+        'secret': google.secret
+    },
+    'vk': {
+        'id': vk.id,
+        'secret': vk.secret
+    },
+    'mail': {
+        'id': mail.id,
+        'secret': mail.secret
+    },
 }
 
 auth_service = Blueprint("auth_service", __name__, url_prefix="/")
