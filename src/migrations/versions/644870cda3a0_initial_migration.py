@@ -1,8 +1,8 @@
-"""empty message
+"""Initial migration
 
-Revision ID: f07be1c62d90
+Revision ID: 644870cda3a0
 Revises: 
-Create Date: 2022-11-16 09:49:32.131827
+Create Date: 2022-11-19 08:46:53.872562
 
 """
 from alembic import op
@@ -13,7 +13,7 @@ from src.models.authentication import PARTITION_TABLES_REGISTRY, create_table_lo
 
 
 # revision identifiers, used by Alembic.
-revision = 'f07be1c62d90'
+revision = '644870cda3a0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -55,6 +55,16 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', 'login_at'),
     sa.UniqueConstraint('login_at', 'id'),
     postgresql_partition_by='RANGE (login_at)'
+    )
+    op.create_table('social_account',
+    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('social_id', sa.Text(), nullable=False),
+    sa.Column('social_name', sa.Text(), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('social_id', 'social_name', name='social_pk')
     )
     op.create_table('user_role',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
@@ -120,6 +130,7 @@ def downgrade():
     op.drop_table('authentication2021')
     op.drop_table('authentication2020')
     op.drop_table('user_role')
+    op.drop_table('social_account')
     op.drop_table('authentication')
     op.drop_index('users_login_index', table_name='users')
     op.drop_table('users')
