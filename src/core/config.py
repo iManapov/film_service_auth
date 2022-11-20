@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     redis_host: str = Field("localhost", env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
 
+    enable_tracer: bool = Field(True, env="ENABLE_TRACER")
     jaeger_host: str = Field("localhost", env="JAEGER_HOST")
     jaeger_port: int = Field(6831, env="JAEGER_PORT")
 

@@ -13,6 +13,7 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
+from src.core.oauth_config import yandex, google, vk, mail
 from src.extensions import ma, jwt, migrate, limiter
 from src.db.db_postgres import db, init_db
 from src.utils import user_datastore
@@ -22,9 +23,7 @@ from src.utils.create_user import init_create_user
 from src.utils.tracing import configure_tracer
 
 
-configure_tracer()
 app = Flask(__name__)
-FlaskInstrumentor().instrument_app(app)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Конфигурация Flask-JWT-Extended
 app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -87,6 +86,9 @@ def register_extensions(app):
     migrate.init_app(app, db)
     limiter.init_app(app)
     init_create_user(app)
+    if settings.enable_tracer:
+        configure_tracer()
+        FlaskInstrumentor().instrument_app(app)
 
 
 def prepare_start():
