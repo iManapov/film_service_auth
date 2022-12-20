@@ -12,6 +12,11 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: auth-api
 
   redis:
     container_name: redis_auth
@@ -25,6 +30,11 @@ services:
       retries: 5
     volumes:
       - redis_data:/data
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: redis-auth-api
 
   postgres:
     container_name: postgres_db
@@ -40,6 +50,11 @@ services:
       interval: 10s
       timeout: 30s
       retries: 5
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: postgres-auth-api
 
   nginx:
     image: nginx:1.23.1
@@ -51,6 +66,11 @@ services:
       - api
     ports:
       - "80:80"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: nginx-auth-api
 
   jaeger:
     image: jaegertracing/all-in-one:latest

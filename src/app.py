@@ -1,5 +1,9 @@
+import logging
 import os
 import sys
+
+import logstash
+import sentry_sdk
 from http import HTTPStatus
 
 from flask import Flask, Blueprint, request
@@ -13,7 +17,6 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from src.core.oauth_config import yandex, google, vk, mail
 from src.extensions import ma, jwt, migrate, limiter
 from src.db.db_postgres import db, init_db
 from src.utils import user_datastore
@@ -21,9 +24,28 @@ from src.core.config import settings, yandex, vk, google, mail
 from src.api.v1.resources import api_v1
 from src.utils.create_user import init_create_user
 from src.utils.tracing import configure_tracer
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(dsn=settings.sentry_dsn,
+                integrations=[FlaskIntegration()], traces_sample_rate=1.0)
 
 
 app = Flask(__name__)
+# Конфигурация logstash
+app.logger = logging.getLogger(__name__)
+app.logger.setLevel(logging.INFO)
+logstash_handler = logstash.LogstashHandler('logstash', 5044, version=1)
+
+
+class RequestIdFilter(logging.Filter):
+    def filter(self, record):
+        record.request_id = request.headers.get('X-Request-Id')
+        return True
+
+
+app.logger.addFilter(RequestIdFilter())
+app.logger.addHandler(logstash_handler)
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # Конфигурация Flask-JWT-Extended
 app.config["PROPAGATE_EXCEPTIONS"] = True
