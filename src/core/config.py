@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     service_host: str = Field("localhost", env="SERVICE_HOST")
     service_port: int = Field("5000", env="SERVICE_PORT")
     debug: bool = Field(True, env="DEBUG")
+    sentry_dsn: str = Field(..., env='SENTRY_DSN')
 
     redis_host: str = Field("localhost", env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
