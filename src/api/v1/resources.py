@@ -2,7 +2,8 @@ from flask_restful import Api
 from flask import Blueprint
 
 from src.api.v1.roles import Roles, RoleList
-from src.api.v1.user import SignUp, Login, RefreshTokens, Logout, ChangeCreds, LoginHistory, UserRoles, ChangeUserRoles
+from src.api.v1.user import SignUp, Login, RefreshTokens, Logout, ChangeCreds, \
+    LoginHistory, UserRoles, ChangeUserRoles, UserIdList
 from src.api.v1.api_oauth import Authorize, Callback
 
 api_v1 = Blueprint("api_v1", __name__, url_prefix="api/v1")
@@ -22,3 +23,5 @@ api.add_resource(Callback, "/callback/<string:provider>")
 
 api.add_resource(Roles, "/role/<string:id>")
 api.add_resource(RoleList, "/role/")
+
+api.add_resource(UserIdList, "/users/idlist/")

@@ -35,6 +35,10 @@ class User(db.Model, UserMixin):
     def get_by_id(cls, _id) -> "User":
         return cls.query.get(_id)
 
+    @classmethod
+    def get_all_users_id_list(cls) -> list[str]:
+        return [str(user.id) for user in cls.query.all()]
+
     def as_dict(self) -> dict:
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
 

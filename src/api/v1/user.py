@@ -535,3 +535,31 @@ class ChangeUserRoles(Resource):
         user_datastore.remove_role_from_user(user, role)
         db.session.commit()
         return {"msg": "Success"}, HTTPStatus.OK
+
+
+class UserIdList(Resource):
+    """API-view для получения id всех пользователей."""
+
+    def get(self):
+        """
+        Get all users id
+        Get all users id
+        ---
+        tags:
+          - users
+        responses:
+          200:
+            description: Users id
+            schema:
+              properties:
+                result:
+                  type: array
+                  items:
+                    type: uuid
+                  description: Users id
+          400:
+            description: Invalid uuid
+        """
+
+        user_id_list = User.get_all_users_id_list()
+        return {"result": user_id_list}, HTTPStatus.OK
