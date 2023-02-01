@@ -563,3 +563,46 @@ class UserIdList(Resource):
 
         user_id_list = User.get_all_users_id_list()
         return {"result": user_id_list}, HTTPStatus.OK
+
+
+class UserSubsInfo(Resource):
+    """API-view для получения информации о подписках пользователя."""
+
+    def get(self, user_id):
+        """
+        Get users info about subscriptions
+        Get users info about subscriptions
+        ---
+        tags:
+          - users
+        parameters:
+          - name: user_id
+            in: path
+            type: uuid
+            required: true
+            default: all
+        responses:
+          200:
+            description: Users subscription info
+            schema:
+              properties:
+                result:
+                  type: object
+                  description: Users roles
+          400:
+            description: Invalid uuid
+        """
+
+        if not is_uuid(user_id):
+            return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
+        user = User.get_by_id(user_id)
+
+        if not user:
+            return {"error": "No user with specified id"}, HTTPStatus.BAD_REQUEST
+        return {
+            "result": {
+                "user_id": str(user.id),
+                "is_trial_used": user.is_trial_used,
+                "subscription_until": str(user.subscription_until)
+            }
+        }, HTTPStatus.OK
