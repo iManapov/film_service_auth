@@ -40,6 +40,8 @@ def upgrade():
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('confirmed_at', sa.DateTime(), nullable=True),
     sa.Column('is_administrator', sa.Boolean(), nullable=True),
+    sa.Column('subscription_until', sa.Date(), default=None, nullable=True),
+    sa.Column('is_trial_used', sa.Boolean(), default=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('id'),
