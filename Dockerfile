@@ -1,6 +1,6 @@
 FROM python:3.10.6-slim
 
-EXPOSE 8000
+EXPOSE 5001
 
 WORKDIR /opt/app
 
@@ -18,5 +18,8 @@ COPY . .
 COPY src/core/docker.env src/core/.env
 COPY tests/functional/docker.env tests/functional/.env
 
-ENTRYPOINT ["gunicorn", "src.wsgi_app:app", "--workers", "4", \
+WORKDIR /opt/app/src
+
+ENTRYPOINT ["gunicorn", "wsgi_app:app", "--workers", "4", \
             "--worker-class", "gevent", "--bind", "0.0.0.0:5001"]
+
