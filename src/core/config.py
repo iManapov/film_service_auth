@@ -1,11 +1,9 @@
-from typing import Any
-
 from pydantic import BaseSettings, Field
 import enum
 
 
 class Settings(BaseSettings):
-    """Конфиг сервиса авторизации"""
+    """Auth service config"""
 
     service_host: str = Field("localhost", env="SERVICE_HOST")
     service_port: int = Field("5000", env="SERVICE_PORT")
@@ -25,11 +23,10 @@ class Settings(BaseSettings):
     pg_user: str = Field(..., env="PG_USER")
     pg_pass: str = Field(..., env="PG_PASSWORD")
 
-    # Ограничения количества запросов пользователей к сервису
     rate_limits = [
-        "200 per day", # 200 запросов в день
-        "50 per hour", # 50 запросов в час
-        "1 per 10 second", # 1 запрос в 10 секунд
+        "200 per day",  # 200 requests per day
+        "50 per hour",  # 50 requests per hour
+        "1 per 10 second",  # 1 requests per second
     ]
 
     class Config:
@@ -85,20 +82,6 @@ class MailSettings(BaseSettings):
         env_file = "core/.env"
         env_file_encoding = "utf-8"
 
-# class ProvidersSettings(BaseSettings):
-#     def __init__(self, provider, **values: Any):
-#         super().__init__(**values)
-#         provider = provider.upper()
-#         self.id: str = Field(..., env=f"{provider}_ID")
-#         secret: str = Field(..., env=f"{provider}_SECRET")
-#         authorize_url: str = Field(..., env=f"{provider}_AUTH_URL")
-#         access_token_url: str = Field(..., env=f"{provider}_TOKEN_URL")
-#         base_url: str = Field(..., env=f"{provider}_BASE_URL")
-#
-#     class Config:
-#         env_file = "core/.env"
-#         env_file_encoding = "utf-8"
-
 
 class Providers(enum.Enum):
     yandex = 1
@@ -112,5 +95,3 @@ yandex = YandexSettings()
 vk = VkSettings()
 google = GoogleSettings()
 mail = MailSettings()
-# vk = ProvidersSettings(Providers.vk.name)
-

@@ -31,7 +31,7 @@ sentry_sdk.init(dsn=settings.sentry_dsn,
 
 
 app = Flask(__name__)
-# Конфигурация logstash
+
 app.logger = logging.getLogger(__name__)
 app.logger.setLevel(logging.INFO)
 logstash_handler = logstash.LogstashHandler('logstash', 5044, version=1)
@@ -47,12 +47,12 @@ app.logger.addFilter(RequestIdFilter())
 app.logger.addHandler(logstash_handler)
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# Конфигурация Flask-JWT-Extended
+
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_SECRET_KEY"] = "super-secret"
 app.config["SECRET_KEY"] = "super-secret"
 
-# Конфигурация Swagger
+
 swagger_config = Swagger.DEFAULT_CONFIG
 swagger_config["swagger_ui_bundle_js"] = "//unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"
 swagger_config["swagger_ui_standalone_preset_js"] = "//unpkg.com/swagger-ui-dist@3/swagger-ui-standalone-preset.js"
@@ -62,7 +62,7 @@ swagger_config["swagger_ui_css"] = "//unpkg.com/swagger-ui-dist@3/swagger-ui.css
 swagger = Swagger(app, config=swagger_config)
 security = Security(app, user_datastore)
 
-# Конфигурация Postgresql
+
 conn_string = f"postgresql://{settings.pg_user}:{settings.pg_pass}@{settings.pg_host}:{settings.pg_port}/{settings.pg_db_name}"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"{conn_string}?options=-c%20search_path=auth_service"
 

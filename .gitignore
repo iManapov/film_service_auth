@@ -134,3 +134,4 @@ dmypy.json
 
 /src/core/docker.env
 /tests/functional/docker.env
+/src/core/.env

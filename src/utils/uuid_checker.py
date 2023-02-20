@@ -2,7 +2,7 @@ from uuid import UUID
 
 
 def is_uuid(uuid_to_test):
-    """Проверка на uuid."""
+    """Check to uuid"""
 
     try:
         UUID(str(uuid_to_test))

@@ -1,4 +1,3 @@
-
 import click
 from flask import Flask
 
@@ -9,10 +8,11 @@ from src.utils.user_datastore import user_datastore
 
 def init_create_user(app: Flask):
     """
-    Создание консольной команды по созданию пользователя для Flask.
+    Creates console command for creating superUser
 
-    app: Приложение
+    app: flask app
     """
+
     @app.cli.command("create-user")
     @click.argument("login")
     @click.argument("password")

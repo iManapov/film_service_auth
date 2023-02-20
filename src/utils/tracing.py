@@ -8,6 +8,8 @@ from src.core.config import settings
 
 
 def configure_tracer() -> None:
+    """Jaeger configuration"""
+
     trace.set_tracer_provider(
         TracerProvider(
             resource=Resource.create({SERVICE_NAME: 'auth-service'})

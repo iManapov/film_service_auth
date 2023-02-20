@@ -12,15 +12,11 @@ REFRESH_EXPIRES = timedelta(minutes=2)
 
 def create_and_output_tokens(user, user_agent):
     """
-    Функция создает токены и возвращает их в JSON формате
+    Creates token and returns them as JSON
 
-    Args:
-        user: Объект пользователя
-        user_agent: Данные авторизации пользователем
-
-    Returns:
-        dict(access_token, refresh_token, user.id)
-        HTTPStatus.OK: 200
+    :param user: User object
+    :param user_agent: user agent information
+    :return: tokens
     """
     refresh_token = create_refresh_token(identity=user.id,
                                          additional_claims={

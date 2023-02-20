@@ -5,6 +5,7 @@ services:
   api:
     container_name: flask
     build: .
+    env_file: .env
     expose:
       - "5001"
     depends_on:

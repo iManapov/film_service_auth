@@ -4,16 +4,16 @@ from http.client import FORBIDDEN
 import string
 from secrets import choice as secrets_choice
 import bcrypt
-from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 
 
 def get_hash(password: str) -> bytes:
     """
-    Получение соли для хеширования и самого хэша
+    Returns hash for password
 
-    @param password: пароль для хэширования
+    :param password: password for hashing
     """
+
     bytes_ = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hash_ = bcrypt.hashpw(bytes_, salt)
@@ -22,19 +22,21 @@ def get_hash(password: str) -> bytes:
 
 def check_password(password: str, stored_hash: bytes) -> bool:
     """
-    Проверка соответствия хэша полученного пароля хранимому хэшу
+    Checks password with stored hash
 
-    @param password: полученный пароль для сравнения с хэшем
-    @param stored_hash: хранимый хэш
+    :param password: password
+    :param stored_hash: stored hash
     """
+
     bytes_ = password.encode('utf-8')
     return bcrypt.checkpw(bytes_, stored_hash)
 
 
 def admin_required():
     """
-    Проверка пользователя на наличие прав администратора
+    Checks is user admin
     """
+
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):

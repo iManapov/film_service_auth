@@ -1,10 +1,9 @@
-from typing import Optional
-
 import redis
 
 from src.core.config import settings
 
-# для хранения отозванных access-токенов
+
+# For storing inactive access tokens
 jwt_redis_blocklist = redis.StrictRedis(
     host=settings.redis_host,
     port=settings.redis_port,
@@ -12,7 +11,7 @@ jwt_redis_blocklist = redis.StrictRedis(
     decode_responses=True
 )
 
-# для хранения refresh-токенов
+# For storing refresh tokens
 jwt_redis_refresh = redis.StrictRedis(
     host=settings.redis_host,
     port=settings.redis_port,
@@ -20,7 +19,7 @@ jwt_redis_refresh = redis.StrictRedis(
     decode_responses=True
 )
 
-# для ограничения числа запросов полхователей
+# For limiting user requests rate
 rate_limit_redis_pool = redis.ConnectionPool(
     host=settings.redis_host,
     port=settings.redis_port,

@@ -1,15 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any
 
 from src.db.db_postgres import db
-
-# скорее всего убрать
 
 
 class AbstractORM(ABC):
     """
-    Абстрактный класс для работы с БД
+    Abstract db class
     """
     @abstractmethod
     def insert(self, row):
@@ -23,16 +20,18 @@ class AbstractORM(ABC):
 @dataclass
 class SQLAlchemy(AbstractORM):
     """
-    Класс для работы с БД через SQL Alchemy
+    SQL Alchemy db class
     """
+
     database: db = db
 
     def insert(self, row: db.Model):
         """
-        Метод для вставки записи в таблицу
+        Inserts row to db table
 
-        @param row: вставляемая запись
+        :param row: row to insert
         """
+
         db.session.add(row)
         db.session.commit()
 

@@ -18,7 +18,6 @@ from src.db.db_redis import jwt_redis_blocklist, jwt_redis_refresh
 from src.models.users import User
 from src.models.authentication import Authentication
 from src.models.roles import Role
-from src.utils.db import SQLAlchemy
 from src.utils.tokens import create_and_output_tokens
 from src.utils.user_datastore import user_datastore
 from src.utils.security import get_hash, check_password, admin_required
@@ -32,6 +31,7 @@ user_schema = UserSchema()
 ACCESS_EXPIRES = timedelta(minutes=2)
 REFRESH_EXPIRES = timedelta(minutes=2)
 
+
 # Callback function to check if a JWT exists in the redis blocklist
 @jwt.token_in_blocklist_loader
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
@@ -42,8 +42,9 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
 
 class SignUp(Resource):
     """
-    API-view для регистрации пользователя
+    API-view for user sign up
     """
+
     def post(self):
         """
         User signup
@@ -91,6 +92,7 @@ class SignUp(Resource):
           400:
             description: Invalid credentials
         """
+
         try:
             data = request.get_json()
             if (data.get("login") and data.get("password") and data.get("email")) is None:
@@ -106,9 +108,9 @@ class SignUp(Resource):
 
 class Login(Resource):
     """
-    API-view для получения access- и refresh-токенов
-    при вводе логина и пароля
+    API-view for getting access and refresh tokens by login and password
     """
+
     def post(self):
         """
         User login
@@ -144,6 +146,7 @@ class Login(Resource):
           401:
             description: Credentials required
         """
+
         data = request.get_json()
         user_agent = str(request.user_agent)
         if not data:
@@ -157,9 +160,9 @@ class Login(Resource):
 
 class RefreshTokens(Resource):
     """
-    API-view для получения новых access- и refresh-токенов
-    с помощью refresh-токена
+    API-view for getting new access and refresh tokens by refresh token
     """
+
     @jwt_required(refresh=True)
     def post(self):
         """
@@ -191,6 +194,7 @@ class RefreshTokens(Resource):
           400:
             description: Token is invalid
         """
+
         jti = get_jwt()["jti"]
         identity = get_jwt_identity()
         user = user_datastore.find_user(id=identity)
@@ -222,9 +226,9 @@ class RefreshTokens(Resource):
 
 class Logout(Resource):
     """
-    API-view для выхода пользователя из системы
-    и помещения его access-токена в блок-лист
+    API-view for user logout
     """
+
     @jwt_required(verify_type=False)
     def delete(self):
         """
@@ -254,6 +258,7 @@ class Logout(Resource):
           422:
             description: Invalid token
         """
+
         token = get_jwt()
         jti = token["jti"]
 
@@ -265,7 +270,7 @@ class Logout(Resource):
 
 
 class ChangeCreds(Resource):
-    """API-view для изменения данных пользователя."""
+    """API-view for editing user data"""
 
     @jwt_required()
     def put(self, user_id):
@@ -341,7 +346,7 @@ class ChangeCreds(Resource):
 
 
 class LoginHistory(Resource):
-    """API-view для просмотра истории входов."""
+    """API-view for getting login history"""
 
     @jwt_required()
     def get(self, user_id):
@@ -383,6 +388,7 @@ class LoginHistory(Resource):
           400:
             description: Invalid uuid
         """
+
         if not is_uuid(user_id):
             return {"error": "Invalid UUID format"}, HTTPStatus.BAD_REQUEST
         try:
@@ -395,7 +401,7 @@ class LoginHistory(Resource):
 
 
 class UserRoles(Resource):
-    """API-view для просмотра ролей пользователя."""
+    """API-view for getting user roles"""
 
     @jwt_required()
     def get(self, user_id):
@@ -438,7 +444,7 @@ class UserRoles(Resource):
 
 
 class ChangeUserRoles(Resource):
-    """API-view для изменения ролей пользователя."""
+    """API-view for editing user roles"""
 
     @jwt_required()
     @admin_required()
@@ -538,7 +544,7 @@ class ChangeUserRoles(Resource):
 
 
 class UserIdList(Resource):
-    """API-view для получения id всех пользователей."""
+    """API-view for getting all users id"""
 
     def get(self):
         """
@@ -566,7 +572,7 @@ class UserIdList(Resource):
 
 
 class UserSubsInfo(Resource):
-    """API-view для получения информации о подписках пользователя."""
+    """API-view for getting user subscriptions information"""
 
     def get(self, user_id):
         """

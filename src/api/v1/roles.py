@@ -16,7 +16,7 @@ role_list_schema = RoleSchema(many=True)
 
 class Roles(Resource):
     """
-    API-view для получения, изменения, удаления конкретной роли
+    API-view for getting, editing and deleting roles
     """
     def get(self, id):
         """
