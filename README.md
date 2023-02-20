@@ -31,13 +31,13 @@ MAIL_PRIVATE - Mail.ru auth service key
 Firstly create an env file `src/core/.env` with above parameters
 
 Before first run execute following command:
-``` bash
+``` shell
 cd src
 flask db upgrade
 ```
 
 To run service execute command:
-```bash
+```shell
 python src/app.py
 ```
 
@@ -47,7 +47,7 @@ OpenApi documentation url:  http://localhost:5001/apidocs/
 Create `.env` file in the root folder of project with above parameters:
 
 To run service execute command:
-```bash
+```shell
 docker compose up --build
 ```
 OpenApi documentation url:  http://localhost/apidocs/
